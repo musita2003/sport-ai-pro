@@ -1,0 +1,278 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SPORT AI PRO 5.0</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+:root {
+  color-scheme: dark;
+  --bg: #10101c;
+  --panel: #1b1b2d;
+  --panel2: #25253b;
+  --accent: #9867ff;
+  --text: #f5f3ff;
+  --muted: #a5a2bd;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  padding: 20px 16px 35px;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Arial, sans-serif;
+}
+header { margin-bottom: 25px; }
+.logo { font-size: 27px; font-weight: 900; letter-spacing: 1px; }
+.logo span { color: var(--accent); }
+.subtitle { color: var(--muted); font-size: 12px; margin-top: 7px; }
+.status {
+  display: inline-block;
+  margin-top: 15px;
+  padding: 8px 12px;
+  background: #25243a;
+  border: 1px solid #514078;
+  border-radius: 20px;
+  color: #cdb6ff;
+  font-size: 12px;
+}
+h2 { font-size: 17px; margin: 25px 0 13px; }
+.sports {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+.sport {
+  border: 1px solid #34334b;
+  background: var(--panel);
+  color: var(--text);
+  padding: 16px 10px;
+  border-radius: 13px;
+  text-align: left;
+  cursor: pointer;
+  min-height: 83px;
+}
+.sport .emoji { font-size: 25px; display: block; margin-bottom: 8px; }
+.sport .name { font-size: 14px; font-weight: bold; }
+.sport.selected {
+  border: 2px solid var(--accent);
+  background: #302548;
+}
+.dates {
+  display: flex;
+  gap: 8px;
+}
+.date-btn {
+  flex: 1;
+  padding: 12px 7px;
+  border-radius: 10px;
+  border: 1px solid #39384f;
+  background: var(--panel);
+  color: var(--text);
+  font-size: 13px;
+  cursor: pointer;
+}
+.date-btn.selected {
+  border-color: var(--accent);
+  background: #302548;
+}
+input[type="date"] {
+  width: 100%;
+  margin-top: 12px;
+  padding: 12px;
+  border: 1px solid #39384f;
+  border-radius: 10px;
+  color: white;
+  background: var(--panel);
+}
+.summary {
+  margin-top: 22px;
+  padding: 16px;
+  background: var(--panel);
+  border: 1px solid #34334b;
+  border-radius: 13px;
+}
+.summary p { color: var(--muted); font-size: 13px; line-height: 1.6; }
+.primary {
+  width: 100%;
+  margin-top: 16px;
+  padding: 16px;
+  border: 0;
+  border-radius: 12px;
+  background: linear-gradient(100deg, #8050e9, #a36bff);
+  color: white;
+  font-weight: bold;
+  font-size: 15px;
+  cursor: pointer;
+}
+#result {
+  display: none;
+  margin-top: 15px;
+  background: var(--panel2);
+  padding: 14px;
+  border-radius: 12px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+footer {
+  text-align: center;
+  color: var(--muted);
+  font-size: 11px;
+  margin-top: 25px;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">SPORT AI <span>PRO</span></div>
+  <div class="subtitle">INTELIGENCIA DEPORTIVA · VERSIÓN 5.0</div>
+  <div class="status">● BWIN ESPAÑA · FUENTE PRIORITARIA</div>
+</header>
+
+<h2>⚽ Selecciona tu deporte</h2>
+
+<div class="sports" id="sports">
+  <button class="sport selected" data-sport="Fútbol">
+    <span class="emoji">⚽</span>
+    <span class="name">Fútbol</span>
+  </button>
+  <button class="sport" data-sport="Tenis">
+    <span class="emoji">🎾</span>
+    <span class="name">Tenis</span>
+  </button>
+  <button class="sport" data-sport="Baloncesto">
+    <span class="emoji">🏀</span>
+    <span class="name">Baloncesto</span>
+  </button>
+  <button class="sport" data-sport="Voleibol">
+    <span class="emoji">🏐</span>
+    <span class="name">Voleibol</span>
+  </button>
+  <button class="sport" data-sport="Balonmano">
+    <span class="emoji">🤾</span>
+    <span class="name">Balonmano</span>
+  </button>
+  <button class="sport" data-sport="Tenis de mesa">
+    <span class="emoji">🏓</span>
+    <span class="name">Tenis de mesa</span>
+  </button>
+  <button class="sport" data-sport="Hockey">
+    <span class="emoji">🏒</span>
+    <span class="name">Hockey</span>
+  </button>
+  <button class="sport" data-sport="Béisbol">
+    <span class="emoji">⚾</span>
+    <span class="name">Béisbol</span>
+  </button>
+</div>
+
+<h2>📅 Selecciona la fecha</h2>
+
+<div class="dates">
+  <button class="date-btn selected" data-date="today">Hoy</button>
+  <button class="date-btn" data-date="tomorrow">Mañana</button>
+  <button class="date-btn" data-date="custom">Otra fecha</button>
+</div>
+
+<input type="date" id="customDate" style="display:none">
+
+<div class="summary">
+  <strong>🔎 Tu análisis deportivo</strong>
+  <p id="selection">
+    Deporte: Fútbol<br>
+    Fecha: Hoy
+  </p>
+  <button class="primary" id="scan">ANALIZAR CARTELERA</button>
+  <div id="result"></div>
+</div>
+
+<footer>
+  SPORT AI PRO 5.0 · ANÁLISIS DEPORTIVO<br>
+  Las cuotas y apuestas deberán verificarse antes de cualquier decisión.
+</footer>
+
+<script>
+const tg = window.Telegram?.WebApp;
+if (tg) {
+  tg.ready();
+  tg.expand();
+}
+
+let selectedSport = "Fútbol";
+let selectedDate = "today";
+
+function localDate(offset = 0) {
+  const d = new Date();
+  d.setDate(d.getDate() + offset);
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
+const dateInput = document.getElementById("customDate");
+dateInput.min = localDate();
+
+function dateLabel() {
+  if (selectedDate === "today") return "Hoy";
+  if (selectedDate === "tomorrow") return "Mañana";
+  return new Date(selectedDate + "T12:00:00").toLocaleDateString("es-ES");
+}
+
+function updateSummary() {
+  document.getElementById("selection").innerHTML =
+    `<strong>Deporte:</strong> ${selectedSport}<br>` +
+    `<strong>Fecha:</strong> ${dateLabel()}`;
+}
+
+document.querySelectorAll(".sport").forEach(button => {
+  button.addEventListener("click", () => {
+    document.querySelectorAll(".sport").forEach(b => b.classList.remove("selected"));
+    button.classList.add("selected");
+    selectedSport = button.dataset.sport;
+    updateSummary();
+  });
+});
+
+document.querySelectorAll(".date-btn").forEach(button => {
+  button.addEventListener("click", () => {
+    document.querySelectorAll(".date-btn").forEach(b => b.classList.remove("selected"));
+    button.classList.add("selected");
+    selectedDate = button.dataset.date;
+
+    dateInput.style.display =
+      selectedDate === "custom" ? "block" : "none";
+
+    if (selectedDate === "today") dateInput.value = localDate();
+    if (selectedDate === "tomorrow") dateInput.value = localDate(1);
+
+    updateSummary();
+  });
+});
+
+dateInput.addEventListener("change", () => {
+  if (dateInput.value) {
+    selectedDate = dateInput.value;
+    updateSummary();
+  }
+});
+
+document.getElementById("scan").addEventListener("click", () => {
+  const result = document.getElementById("result");
+  result.style.display = "block";
+  result.innerHTML =
+    "<strong>Solicitud preparada</strong><br>" +
+    `Deporte: ${selectedSport}<br>` +
+    `Fecha: ${dateLabel()}<br><br>` +
+    "La interfaz está lista. La conexión al escáner de eventos, " +
+    "las cuotas de Bwin y el motor de análisis se incorporarán " +
+    "en la siguiente fase. Todavía no se han consultado partidos ni cuotas.";
+});
+updateSummary();
+</script>
+
+</body>
+</html>
